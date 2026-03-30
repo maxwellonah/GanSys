@@ -64,25 +64,33 @@ export function DashboardHome({ initialSnapshot }: Props) {
 
       <section className={styles.section}>
         <div className={styles.summaryGrid}>
-          <article className={styles.card}>
+          <article className={styles.summaryCard}>
             <p className={styles.eyebrow}>Controllers</p>
             <strong>{snapshot.summary.controllerCount}</strong>
-            <span className={styles.muted}>{snapshot.summary.onlineControllers} online right now</span>
+            <p className={styles.muted}>
+              {snapshot.summary.onlineControllers} online,{" "}
+              {snapshot.summary.controllerCount - snapshot.summary.onlineControllers} not currently online
+            </p>
           </article>
-          <article className={styles.card}>
+          <article className={styles.summaryCard}>
             <p className={styles.eyebrow}>Alerts</p>
-            <strong>{snapshot.summary.criticalAlerts}</strong>
-            <span className={styles.muted}>{snapshot.summary.warningAlerts} warnings still open</span>
+            <strong>{snapshot.summary.criticalAlerts + snapshot.summary.warningAlerts}</strong>
+            <p className={styles.muted}>
+              {snapshot.summary.criticalAlerts} critical, {snapshot.summary.warningAlerts} warning
+              {snapshot.summary.warningAlerts === 1 ? "" : "s"}
+            </p>
           </article>
-          <article className={styles.card}>
+          <article className={styles.summaryCard}>
             <p className={styles.eyebrow}>Tank Average</p>
             <strong>{snapshot.summary.avgTankLevel ?? "--"}%</strong>
-            <span className={styles.muted}>Across registered tank channels</span>
+            <p className={styles.muted}>Across registered tank channels</p>
           </article>
-          <article className={styles.card}>
+          <article className={styles.summaryCard}>
             <p className={styles.eyebrow}>Soil Average</p>
             <strong>{snapshot.summary.avgSoilMoisture ?? "--"}%</strong>
-            <span className={styles.muted}>{snapshot.summary.openCommands} manual commands pending</span>
+            <p className={styles.muted}>
+              {snapshot.summary.openCommands} manual command{snapshot.summary.openCommands === 1 ? "" : "s"} pending
+            </p>
           </article>
         </div>
       </section>
