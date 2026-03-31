@@ -42,7 +42,7 @@ export function DashboardHome({ initialSnapshot }: Props) {
       }
       const data = (await response.json()) as DashboardSnapshot;
       setSnapshot(data);
-    }, 10_000);
+    }, 5_000);
 
     return () => window.clearInterval(interval);
   }, []);

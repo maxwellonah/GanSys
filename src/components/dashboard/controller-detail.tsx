@@ -148,7 +148,7 @@ export function ControllerDetail({ initialSnapshot }: Props) {
       }
       const data = (await response.json()) as ControllerSnapshot;
       setSnapshot(data);
-    }, 10_000);
+    }, 3_000);
     return () => window.clearInterval(interval);
   }, [snapshot.controller.id]);
 
@@ -172,7 +172,7 @@ export function ControllerDetail({ initialSnapshot }: Props) {
     }
 
     loadHistory();
-    const interval = window.setInterval(loadHistory, 30_000);
+    const interval = window.setInterval(loadHistory, 10_000);
 
     return () => {
       active = false;
