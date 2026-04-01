@@ -10,7 +10,8 @@ declare global {
   var __gansys_sqlite__: Database.Database | undefined;
 }
 
-const databasePath = path.join(process.cwd(), "data", "gansys.sqlite");
+const databaseDirectory = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? path.join(process.cwd(), "data");
+const databasePath = path.join(databaseDirectory, "gansys.sqlite");
 
 function createDatabase() {
   fs.mkdirSync(path.dirname(databasePath), { recursive: true });
