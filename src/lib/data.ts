@@ -12,3 +12,4 @@ export * from "./services/controller.service";
 export * from "./services/telemetry.service";
 export * from "./services/snapshot.service";
 export * from "./services/device-sync.service";
+export * from "./services/pest.service";

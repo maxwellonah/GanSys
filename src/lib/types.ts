@@ -107,12 +107,49 @@ export type ControllerSnapshot = {
   controller: ControllerCard;
   alerts: AlertView[];
   commands: CommandView[];
+  pestSchedule: PestControlSchedule | null;
+  pestLog: PestLogEntry[];
+  latestSnapshots: Record<string, SnapshotPayload>;
 };
 
 export type HistoryPoint = {
   recordedAt: string;
   numericValue: number;
 };
+
+export type SprayEntry = {
+  startTime: string;       // "HH:MM" 24-hour format
+  durationMinutes: number; // 1–120
+};
+
+export type PestControlSchedule = {
+  controllerId: string;
+  enabled: boolean;
+  sprayEntries: SprayEntry[];
+  uvStartTime: string | null;
+  uvEndTime: string | null;
+  updatedAt: string;
+};
+
+export type SnapshotPayload = {
+  imageUrl: string | null;
+  imageBase64: string | null;
+};
+
+export type PestLogEntry = {
+  channelId: string;
+  channelName: string;
+  activationType: "manual" | "scheduled";
+  booleanState: boolean;
+  recordedAt: string;
+};
+
+export type WsMessage =
+  | { type: "controller_update"; data: ControllerCard }
+  | { type: "alert_opened"; data: AlertView }
+  | { type: "alert_resolved"; data: { alertId: string } }
+  | { type: "snapshot_update"; data: { channelId: string; snapshot: SnapshotPayload } }
+  | { type: "pest_log_entry"; data: PestLogEntry };
 
 export type DeviceReadingInput = {
   channelKey: string;

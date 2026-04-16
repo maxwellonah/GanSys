@@ -7,6 +7,7 @@ import { safeJsonParse } from "@/lib/utils";
 import { resolveOpenAlerts } from "./alert.service";
 import { applyAcknowledgements, expirePendingCommands } from "./command.service";
 import { applyReadings } from "./telemetry.service";
+import { getPestSchedule } from "./pest.service";
 
 function nowIso() {
   return new Date().toISOString();
@@ -95,6 +96,6 @@ export function deviceSync(hardwareId: string, deviceKey: string, payload: Devic
       overrideUntil: command.overrideUntil,
       note: command.note,
     })),
-    pestControlSchedule: null, // will be populated in task 5
+    pestControlSchedule: getPestSchedule(controller.userId, controller.id),
   };
 }

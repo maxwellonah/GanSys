@@ -5,3 +5,4 @@ dist
 data
 *.log
 next-env.d.ts
+.env

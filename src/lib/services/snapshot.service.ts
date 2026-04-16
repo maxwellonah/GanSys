@@ -9,6 +9,7 @@ import { hydrateChannel } from "./channel.service";
 import { hydrateCommand } from "./command.service";
 import { buildControllerCard, getControllerOwnedByUser, getUserControllers, updateControllerStatuses } from "./controller.service";
 import { getUserRecord } from "./auth.service";
+import { getPestSchedule, getPestControlLog, getLatestSnapshots } from "./pest.service";
 
 export function buildSummary(userId: string, controllerCards: ControllerCard[], openAlerts: ReturnType<typeof hydrateAlert>[]): DashboardSummary {
   const openCommands =
@@ -81,5 +82,8 @@ export function getControllerSnapshot(userId: string, controllerId: string): Con
     controller: buildControllerCard(controller, channelRows.map(hydrateChannel), controllerAlerts),
     alerts: controllerAlerts,
     commands: controllerCommands,
+    pestSchedule: getPestSchedule(userId, controllerId),
+    pestLog: getPestControlLog(controller.id),
+    latestSnapshots: getLatestSnapshots(controller.id),
   };
 }

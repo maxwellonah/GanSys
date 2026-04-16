@@ -88,3 +88,24 @@ export const deviceSyncSchema = z.object({
     )
     .optional(),
 });
+
+// Validates "HH:MM" with hours 00–23 and minutes 00–59
+const timeStringSchema = z
+  .string()
+  .regex(/^\d{2}:\d{2}$/, "Time must be in HH:MM format")
+  .refine((val) => {
+    const [h, m] = val.split(":").map(Number);
+    return h >= 0 && h <= 23 && m >= 0 && m <= 59;
+  }, "Invalid time value");
+
+export const sprayEntrySchema = z.object({
+  startTime: timeStringSchema,
+  durationMinutes: z.number().int().min(1).max(120),
+});
+
+export const pestScheduleSchema = z.object({
+  enabled: z.boolean(),
+  sprayEntries: z.array(sprayEntrySchema).max(10),
+  uvStartTime: timeStringSchema.nullable().optional(),
+  uvEndTime: timeStringSchema.nullable().optional(),
+});

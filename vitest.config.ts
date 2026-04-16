@@ -12,5 +12,8 @@ export default defineConfig({
     environment: "node",
     globals: true,
     include: ["tests/**/*.test.ts"],
+    env: {
+      DATABASE_URL: process.env.DATABASE_URL ?? "postgresql://test:test@localhost/test",
+    },
   },
 });

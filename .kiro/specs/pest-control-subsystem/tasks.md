@@ -65,15 +65,15 @@ Restructure the project for production-grade development, migrate the database f
     - Verify timestamp columns use `withTimezone: true`
     - _Requirements: 8.4_
 
-- [-] 2. Add new channel templates and setup presets
-  - [ ] 2.1 Add `spray_pump`, `uv_zapper`, `camera_snapshot` templates to `src/lib/templates.ts`
+- [x] 2. Add new channel templates and setup presets
+  - [x] 2.1 Add `spray_pump`, `uv_zapper`, `camera_snapshot` templates to `src/lib/templates.ts`
     - Extend `ChannelTemplateId` union with `"spray_pump" | "uv_zapper" | "camera_snapshot"`
     - Add `spray_pump` template: `kind: "actuator"`, `unit: "state"`, `config: { onLabel: "Spraying", offLabel: "Idle", display: "toggle" }`
     - Add `uv_zapper` template: `kind: "actuator"`, `unit: "state"`, `config: { onLabel: "Active", offLabel: "Off", display: "toggle" }`
     - Add `camera_snapshot` template: `kind: "hybrid"`, `unit: "image"`, `config: { display: "image" }`
     - _Requirements: 7.1, 7.2, 4.1_
 
-  - [ ] 2.2 Add `pest_control` preset and update `full_gansystems` in `src/lib/templates.ts`
+  - [x] 2.2 Add `pest_control` preset and update `full_gansystems` in `src/lib/templates.ts`
     - Extend `SetupPreset["id"]` union with `"pest_control"`
     - Add `pest_control` preset with `spray_pump` and `uv_zapper` channels (keys: `"spray_pump"`, `"uv_zapper"`)
     - Append `spray_pump` and `uv_zapper` channels to the `full_gansystems` preset channels array
@@ -89,25 +89,25 @@ Restructure the project for production-grade development, migrate the database f
     - **Property 9: Preset channel keys are unique within a controller**
     - **Validates: Requirements 10.2**
 
-- [ ] 3. Extend types and validators
-  - [ ] 3.1 Add new types to `src/lib/types.ts`
+- [x] 3. Extend types and validators
+  - [x] 3.1 Add new types to `src/lib/types.ts`
     - Add `SprayEntry`, `PestControlSchedule`, `SnapshotPayload`, `PestLogEntry`, `WsMessage` types as defined in the design
     - Extend `ControllerSnapshot` with `pestSchedule: PestControlSchedule | null`, `pestLog: PestLogEntry[]`, `latestSnapshots: Record<string, SnapshotPayload>`
     - Add `DeviceSyncResponse` type with `commands` and `pestControlSchedule` fields
     - _Requirements: 8.4, 8.5, 9.3, 12.3_
 
-  - [ ] 3.2 Add Zod validation schema for pest control schedule in `src/lib/validators.ts`
+  - [x] 3.2 Add Zod validation schema for pest control schedule in `src/lib/validators.ts`
     - Add `SprayEntrySchema`: `startTime` matching `/^\d{2}:\d{2}$/` with hours 0–23 and minutes 0–59, `durationMinutes` integer 1–120
     - Add `PestScheduleSchema`: `enabled` boolean, `sprayEntries` array of 0–10 `SprayEntrySchema`, `uvStartTime` and `uvEndTime` nullable strings matching the same time format
     - _Requirements: 8.2, 8.3_
 
-- [ ] 4. Implement pest control schedule data layer and API
-  - [ ] 4.1 Add `getPestSchedule` and `upsertPestSchedule` to `src/lib/data.ts`
+- [x] 4. Implement pest control schedule data layer and API
+  - [x] 4.1 Add `getPestSchedule` and `upsertPestSchedule` to `src/lib/data.ts`
     - `getPestSchedule(userId, controllerId)`: verify ownership, query `pestControlSchedules` by `controllerId`, return hydrated `PestControlSchedule` or `null`
     - `upsertPestSchedule(userId, controllerId, input)`: verify ownership, insert or update the single row for that controller using Drizzle's `onConflictDoUpdate`
     - _Requirements: 8.4, 8.6, 8.7_
 
-  - [ ] 4.2 Create `app/api/controllers/[id]/pest-schedule/route.ts`
+  - [x] 4.2 Create `app/api/controllers/[id]/pest-schedule/route.ts`
     - `GET`: call `getPestSchedule`, return `{ schedule }` (null if not configured)
     - `PUT`: validate body with `PestScheduleSchema`, call `upsertPestSchedule`, call `publishCommands` to push updated schedule to device, return `{ schedule }`
     - Return 404 for unowned controllers, 400 for validation errors
@@ -119,13 +119,13 @@ Restructure the project for production-grade development, migrate the database f
     - **Property 6: Schedule replacement is total**
     - **Validates: Requirements 8.7**
 
-- [ ] 5. Update device sync to include pest control schedule
-  - [ ] 5.1 Update `deviceSync` in `src/lib/data.ts` to fetch and return the pest schedule
+- [x] 5. Update device sync to include pest control schedule
+  - [x] 5.1 Update `deviceSync` in `src/lib/data.ts` to fetch and return the pest schedule
     - After processing readings and acknowledgements, call `getPestSchedule` for the controller
     - Return `{ commands, pestControlSchedule }` from `deviceSync`
     - _Requirements: 8.5, 8.6, 12.3_
 
-  - [ ] 5.2 Update `app/api/device/sync/route.ts` response shape
+  - [x] 5.2 Update `app/api/device/sync/route.ts` response shape
     - Include `pestControlSchedule` in the JSON response body
     - _Requirements: 12.3_
 
@@ -133,18 +133,18 @@ Restructure the project for production-grade development, migrate the database f
     - **Property 7: Sync response always contains pestControlSchedule field**
     - **Validates: Requirements 8.5, 8.6**
 
-- [ ] 6. Add camera snapshot support
-  - [ ] 6.1 Update `applyReadings` in `src/lib/data.ts` to handle `camera_snapshot` channels
+- [x] 6. Add camera snapshot support
+  - [x] 6.1 Update `applyReadings` in `src/lib/data.ts` to handle `camera_snapshot` channels
     - Detect when `reading.payload` contains `imageUrl` or `imageBase64`
     - Store the payload in `telemetrySamples.payload` jsonb column
     - _Requirements: 4.2, 12.5_
 
-  - [ ] 6.2 Add `getLatestSnapshots(controllerId)` to `src/lib/data.ts`
+  - [x] 6.2 Add `getLatestSnapshots(controllerId)` to `src/lib/data.ts`
     - For each `camera_snapshot` channel on the controller, fetch the most recent telemetry sample with a non-empty payload
     - Return `Record<channelId, SnapshotPayload>`
     - _Requirements: 4.2, 4.3_
 
-  - [ ] 6.3 Update `getControllerSnapshot` to populate `latestSnapshots`
+  - [x] 6.3 Update `getControllerSnapshot` to populate `latestSnapshots`
     - Call `getLatestSnapshots` and include the result in the returned `ControllerSnapshot`
     - _Requirements: 4.3, 4.4_
 
@@ -153,13 +153,13 @@ Restructure the project for production-grade development, migrate the database f
     - **Validates: Requirements 4.2**
 
 - [ ] 7. Add pest control activity log
-  - [ ] 7.1 Add `getPestControlLog(controllerId, limit)` to `src/lib/data.ts`
+  - [x] 7.1 Add `getPestControlLog(controllerId, limit)` to `src/lib/data.ts`
     - Query `telemetrySamples` joined with `channels` where `template IN ('spray_pump', 'uv_zapper')` for the given controller
     - Order by `recordedAt` descending, limit to 20
     - Return `PestLogEntry[]` with `channelId`, `channelName`, `activationType` (from payload or default `"manual"`), `booleanState`, `recordedAt`
     - _Requirements: 9.2, 9.3_
 
-  - [ ] 7.2 Update `getControllerSnapshot` to populate `pestLog` and `pestSchedule`
+  - [x] 7.2 Update `getControllerSnapshot` to populate `pestLog` and `pestSchedule`
     - Call `getPestControlLog` and `getPestSchedule` and include both in the returned `ControllerSnapshot`
     - _Requirements: 9.1, 9.2, 8.6_
 
@@ -167,7 +167,7 @@ Restructure the project for production-grade development, migrate the database f
     - **Property 8: Pest control log returns at most 20 entries ordered by time**
     - **Validates: Requirements 9.2, 9.3**
 
-- [ ] 8. Checkpoint — Ensure all data layer tests pass
+- [x] 8. Checkpoint — Ensure all data layer tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 9. Implement MQTT client
