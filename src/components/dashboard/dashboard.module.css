@@ -2,24 +2,16 @@
   width: min(1480px, calc(100% - 32px));
   margin: 24px auto;
   display: grid;
-  grid-template-columns: 290px 1fr;
-  gap: 24px;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
 }
 
-.sidebar,
-.panel,
-.card,
-.alertCard,
-.modalCard {
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(16px);
-}
-
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
 .sidebar {
-  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
   min-height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
@@ -30,125 +22,154 @@
 
 .brand {
   display: flex;
-  gap: 0.9rem;
+  gap: 0.75rem;
   align-items: center;
 }
 
 .brandOrb {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.85), transparent 40%),
-    linear-gradient(135deg, var(--primary), var(--accent));
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  flex-shrink: 0;
 }
 
 .eyebrow {
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.25rem;
   color: var(--muted);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-size: 0.74rem;
+  font-size: 0.7rem;
 }
 
 .nav {
-  margin-top: 2rem;
+  margin-top: 1.8rem;
   display: grid;
-  gap: 0.7rem;
+  gap: 0.3rem;
 }
 
 .navLink {
   display: block;
-  padding: 0.92rem 1rem;
-  border-radius: 16px;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius);
   color: var(--muted);
-  background: rgba(250, 255, 255, 0.56);
-  border: 1px solid transparent;
+  font-size: 0.9rem;
+  transition: color 0.15s, background 0.15s;
 }
+.navLink:hover { color: var(--text); background: var(--surface-hover); }
 
 .navLinkActive {
-  color: var(--text);
-  background: linear-gradient(135deg, rgba(0, 184, 107, 0.12), rgba(68, 199, 244, 0.12));
-  border-color: rgba(0, 184, 107, 0.18);
+  color: var(--primary);
+  background: var(--primary-dim);
+  border: 1px solid rgba(0, 230, 118, 0.15);
 }
+.navLinkActive:hover { background: var(--primary-dim); }
 
 .miniStats {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   display: grid;
-  gap: 0.8rem;
+  gap: 0.6rem;
 }
 
 .miniStat {
-  padding: 0.9rem 1rem;
-  border-radius: 18px;
-  background: rgba(248, 255, 255, 0.62);
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
 }
 
 .miniStat strong {
   display: block;
-  margin-top: 0.35rem;
+  margin-top: 0.2rem;
+  font-size: 0.9rem;
+  color: var(--text);
 }
 
 .account {
-  padding: 1rem;
-  border-radius: 18px;
-  background: rgba(248, 255, 255, 0.62);
+  padding: 0.9rem;
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
 }
 
-.muted {
-  color: var(--muted);
-}
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.muted { color: var(--muted); }
+.small { font-size: 0.82rem; color: var(--muted); }
 
 .main {
   display: grid;
-  gap: 20px;
+  gap: 16px;
+  min-width: 0;
 }
 
 .topbar {
-  padding: 1.4rem 1.6rem;
+  padding: 1.2rem 1.4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
 }
 
 .actions {
   display: flex;
-  gap: 0.8rem;
+  gap: 0.7rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
 .button,
 .ghostButton,
 .dangerButton {
   border: 0;
-  border-radius: 14px;
-  padding: 0.82rem 1rem;
-  font-weight: 700;
+  border-radius: var(--radius);
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: opacity 0.15s, transform 0.15s;
+  white-space: nowrap;
 }
+.button:hover, .ghostButton:hover, .dangerButton:hover { opacity: 0.85; }
 
 .button {
   background: linear-gradient(135deg, var(--primary), var(--primary-strong));
-  color: white;
+  color: #0d1117;
 }
 
 .ghostButton {
-  background: rgba(249, 255, 255, 0.78);
-  color: var(--text);
-  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--text-soft);
+  border: 1px solid var(--line-strong);
 }
 
 .dangerButton {
-  background: rgba(178, 71, 57, 0.1);
+  background: var(--danger-dim);
   color: var(--danger);
-  border: 1px solid rgba(178, 71, 57, 0.18);
+  border: 1px solid rgba(248, 81, 73, 0.2);
 }
 
-.section {
-  display: grid;
-  gap: 18px;
+/* ── Cards & Panels ──────────────────────────────────────────────────────── */
+.panel,
+.card,
+.alertCard,
+.modalCard,
+.summaryCard,
+.controllerCard,
+.settingsCard {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
 }
+
+.panel { padding: 1.2rem; }
+.card { padding: 1rem; }
+.alertCard { padding: 0.9rem; }
+
+/* ── Section ─────────────────────────────────────────────────────────────── */
+.section { display: grid; gap: 16px; }
 
 .sectionHead {
   display: flex;
@@ -157,41 +178,37 @@
   gap: 1rem;
 }
 
-.summaryGrid,
-.controllerGrid,
-.metricGrid,
-.settingsGrid {
-  display: grid;
-  gap: 16px;
-}
-
+/* ── Summary grid ────────────────────────────────────────────────────────── */
 .summaryGrid {
+  display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.summaryCard,
-.controllerCard,
-.metricCard,
-.settingsCard,
-.card {
-  padding: 1.15rem;
+.summaryCard {
+  padding: 1.1rem;
 }
 
-.summaryCard strong,
-.metricCard strong {
+.summaryCard strong {
   display: block;
-  margin: 0.5rem 0;
-  font-size: 1.9rem;
-  font-family: "Palatino Linotype", "Book Antiqua", serif;
+  margin: 0.4rem 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
 }
 
+/* ── Controller grid ─────────────────────────────────────────────────────── */
 .controllerGrid {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .controllerCard {
+  padding: 1.1rem;
   display: grid;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 .cardHead,
@@ -202,127 +219,111 @@
   align-items: flex-start;
 }
 
+/* ── Status badges ───────────────────────────────────────────────────────── */
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.35rem 0.7rem;
+  gap: 0.4rem;
+  padding: 0.28rem 0.65rem;
   border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-.online {
-  color: var(--success);
-  background: rgba(45, 138, 89, 0.12);
-}
+.online  { color: var(--success); background: rgba(63, 185, 80, 0.12); border: 1px solid rgba(63, 185, 80, 0.2); }
+.stale   { color: var(--warning); background: var(--warning-dim); border: 1px solid rgba(210, 153, 34, 0.2); }
+.offline { color: var(--danger);  background: var(--danger-dim);  border: 1px solid rgba(248, 81, 73, 0.2); }
 
-.stale {
-  color: var(--warning);
-  background: rgba(204, 138, 39, 0.12);
-}
-
-.offline {
-  color: var(--danger);
-  background: rgba(178, 71, 57, 0.12);
-}
-
+/* ── Tags ────────────────────────────────────────────────────────────────── */
 .tags {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
 }
 
 .tag {
   border-radius: 999px;
-  padding: 0.32rem 0.65rem;
-  background: linear-gradient(135deg, rgba(0, 184, 107, 0.1), rgba(68, 199, 244, 0.12));
-  color: var(--primary);
-  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 0.75rem;
+  border: 1px solid var(--line);
 }
 
+/* ── Alert list ──────────────────────────────────────────────────────────── */
 .alertList,
 .commandList,
 .channelList {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
-.alertCard {
-  padding: 1rem;
-}
+.alertCritical { border-left: 3px solid var(--danger); }
+.alertWarning  { border-left: 3px solid var(--warning); }
+.alertInfo     { border-left: 3px solid var(--accent); }
 
-.alertCritical {
-  border-left: 4px solid var(--danger);
-}
-
-.alertWarning {
-  border-left: 4px solid var(--warning);
-}
-
-.alertInfo {
-  border-left: 4px solid var(--primary);
-}
-
+/* ── Metric grid ─────────────────────────────────────────────────────────── */
 .metricGrid {
+  display: grid;
   grid-template-columns: 2fr 1fr;
+  gap: 16px;
 }
 
-.chartPanel {
-  padding: 1.2rem;
-  min-height: 360px;
-}
+.chartPanel { min-height: 360px; }
 
 .chartWrap {
   width: 100%;
   height: 270px;
 }
 
+/* ── Sensor grid ─────────────────────────────────────────────────────────── */
 .sensorGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .sensorCard {
   padding: 1rem;
-  border-radius: 20px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(242, 252, 255, 0.68));
-  border: 1px solid rgba(20, 85, 63, 0.08);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
   display: grid;
-  gap: 0.8rem;
+  gap: 0.75rem;
+  transition: border-color 0.2s;
 }
+.sensorCard:hover { border-color: rgba(0, 230, 118, 0.25); }
 
 .reading {
-  font-size: 2rem;
-  font-family: "Palatino Linotype", "Book Antiqua", serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
-.linkedControlList {
-  display: grid;
-  gap: 10px;
-}
+/* ── Linked controls ─────────────────────────────────────────────────────── */
+.linkedControlList { display: grid; gap: 8px; }
 
 .linkedControlCard {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(0, 184, 107, 0.1), rgba(68, 199, 244, 0.12));
-  border: 1px solid rgba(0, 184, 107, 0.1);
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
 }
 
-.controlToggleButton {
-  min-width: 88px;
-}
+.controlToggleButton { min-width: 80px; }
 
+/* ── Progress bar ────────────────────────────────────────────────────────── */
 .progress {
   width: 100%;
-  height: 10px;
+  height: 6px;
   border-radius: 999px;
-  background: rgba(0, 184, 107, 0.12);
+  background: var(--surface-hover);
   overflow: hidden;
 }
 
@@ -330,17 +331,19 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(135deg, var(--accent), var(--primary));
+  background: linear-gradient(90deg, var(--primary), var(--accent));
 }
 
+/* ── Modal ───────────────────────────────────────────────────────────────── */
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(20, 24, 21, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   display: grid;
   place-items: center;
   padding: 20px;
   z-index: 20;
+  backdrop-filter: blur(4px);
 }
 
 .modalCard {
@@ -348,10 +351,8 @@
   padding: 1.4rem;
 }
 
-.formGrid {
-  display: grid;
-  gap: 0.85rem;
-}
+/* ── Forms ───────────────────────────────────────────────────────────────── */
+.formGrid { display: grid; gap: 0.85rem; }
 
 .twoCol {
   display: grid;
@@ -367,76 +368,83 @@
 
 .formRow {
   display: grid;
-  gap: 0.38rem;
+  gap: 0.35rem;
 }
 
+.formRow span,
+.formRow label {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  font-weight: 500;
+}
+
+/* ── Settings ────────────────────────────────────────────────────────────── */
 .settingsGrid {
-  grid-template-columns: 1.05fr 0.95fr;
-}
-
-.settingsCard {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 16px;
 }
 
-.settingsWide {
-  grid-column: 1 / -1;
-}
+.settingsCard { display: grid; gap: 1rem; padding: 1.2rem; }
+.settingsWide { grid-column: 1 / -1; }
 
 .stepList {
   margin: 0.8rem 0 0;
   padding-left: 1.1rem;
   display: grid;
-  gap: 0.55rem;
-  color: var(--text);
+  gap: 0.5rem;
+  color: var(--text-soft);
 }
 
 .inlineLabel {
   display: inline-block;
   margin-bottom: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--text-soft);
 }
 
 .codeBlock {
   padding: 1rem;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 184, 107, 0.12);
-  background: linear-gradient(180deg, rgba(244, 252, 255, 0.92), rgba(236, 248, 252, 0.86));
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
   overflow: auto;
 }
 
 .codeBlock pre {
   margin: 0;
-  font-size: 0.85rem;
-  line-height: 1.55;
-  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  font-family: "Cascadia Code", "Consolas", "Fira Code", monospace;
   white-space: pre-wrap;
   word-break: break-word;
+  color: var(--text-soft);
 }
 
-.controllerStack {
-  display: grid;
-  gap: 14px;
-}
+.controllerStack { display: grid; gap: 12px; }
 
+/* ── Empty state ─────────────────────────────────────────────────────────── */
 .empty {
   padding: 1.4rem;
-  border-radius: 20px;
-  border: 1px dashed rgba(27, 42, 31, 0.16);
+  border-radius: var(--radius);
+  border: 1px dashed var(--line-strong);
   color: var(--muted);
   text-align: center;
+  font-size: 0.88rem;
 }
 
-.small {
-  font-size: 0.84rem;
-}
+/* ── Camera snapshot ─────────────────────────────────────────────────────── */
+.snapshotPanel { padding: 1.2rem; }
 
 .snapshotImage {
   width: 100%;
-  border-radius: 16px;
+  border-radius: var(--radius);
   object-fit: cover;
   max-height: 320px;
+  border: 1px solid var(--line-strong);
 }
 
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .app,
   .settingsGrid,
@@ -446,38 +454,16 @@
   .controllerGrid {
     grid-template-columns: 1fr;
   }
-
-  .sidebar {
-    position: static;
-    min-height: auto;
-  }
+  .sidebar { position: static; min-height: auto; }
 }
 
 @media (max-width: 760px) {
   .app {
-    width: min(100%, calc(100% - 20px));
-    margin: 10px auto;
-    gap: 12px;
+    width: min(100%, calc(100% - 16px));
+    margin: 8px auto;
+    gap: 10px;
   }
-
-  .topbar,
-  .sidebar {
-    padding: 1rem;
-  }
-
-  .twoCol,
-  .threeCol {
-    grid-template-columns: 1fr;
-  }
-}
-
-.snapshotPanel {
-  padding: 1.2rem;
-}
-
-.snapshotImage {
-  width: 100%;
-  border-radius: 16px;
-  object-fit: cover;
-  max-height: 320px;
+  .topbar, .sidebar { padding: 1rem; }
+  .twoCol, .threeCol { grid-template-columns: 1fr; }
+  .summaryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

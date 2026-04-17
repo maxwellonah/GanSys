@@ -1,19 +1,28 @@
 :root {
-  --bg: #f4fcff;
-  --bg-soft: #e8fbf3;
-  --surface: rgba(249, 254, 255, 0.86);
-  --surface-strong: #fcfeff;
-  --line: rgba(20, 85, 63, 0.12);
-  --text: #16332a;
-  --muted: #638278;
-  --primary: #00b86b;
-  --primary-strong: #008f54;
-  --accent: #44c7f4;
-  --danger: #b24739;
-  --warning: #cc8a27;
-  --success: #12a866;
-  --shadow: 0 24px 70px rgba(14, 55, 43, 0.11);
-  --radius: 24px;
+  --bg: #0d1117;
+  --bg-soft: #161b22;
+  --surface: #1c2128;
+  --surface-strong: #21262d;
+  --surface-hover: #2d333b;
+  --line: rgba(240, 246, 252, 0.1);
+  --line-strong: rgba(240, 246, 252, 0.18);
+  --text: #e6edf3;
+  --text-soft: #cdd9e5;
+  --muted: #8b949e;
+  --primary: #00e676;
+  --primary-dim: rgba(0, 230, 118, 0.15);
+  --primary-strong: #00c853;
+  --accent: #29b6f6;
+  --accent-dim: rgba(41, 182, 246, 0.12);
+  --danger: #f85149;
+  --danger-dim: rgba(248, 81, 73, 0.15);
+  --warning: #d29922;
+  --warning-dim: rgba(210, 153, 34, 0.15);
+  --success: #3fb950;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --radius: 12px;
+  --radius-lg: 16px;
 }
 
 * {
@@ -27,29 +36,14 @@ body {
 }
 
 body {
-  background:
-    radial-gradient(circle at top left, rgba(68, 199, 244, 0.18), transparent 24%),
-    radial-gradient(circle at 85% 0%, rgba(0, 184, 107, 0.16), transparent 28%),
-    linear-gradient(180deg, #fbfeff 0%, #eefcff 46%, #f2fff9 100%);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(0, 230, 118, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 0%, rgba(41, 182, 246, 0.05) 0%, transparent 50%);
   color: var(--text);
-  font-family: "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0,
-      transparent 44px,
-      rgba(22, 51, 42, 0.022) 44px,
-      rgba(22, 51, 42, 0.022) 45px
-    );
-  opacity: 0.45;
+  font-family: "Segoe UI Variable Text", "Inter", "Trebuchet MS", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 a {
@@ -72,19 +66,30 @@ input,
 select,
 textarea {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
   color: var(--text);
-  padding: 0.86rem 0.95rem;
+  padding: 0.75rem 0.9rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: rgba(0, 184, 107, 0.5);
-  box-shadow: 0 0 0 4px rgba(0, 184, 107, 0.12);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15);
+}
+
+select option {
+  background: var(--surface-strong);
+  color: var(--text);
 }
 
 main,
@@ -94,4 +99,20 @@ header,
 footer {
   position: relative;
   z-index: 1;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-hover);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }

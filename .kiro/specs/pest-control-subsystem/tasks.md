@@ -261,7 +261,7 @@ Restructure the project for production-grade development, migrate the database f
     - _Requirements: 2.5, 4.5, 9.4, 11.7_
 
 - [ ] 14. Add property-based tests infrastructure and remaining properties
-  - [ ] 14.1 Add `fast-check` to devDependencies
+  - [x] 14.1 Add `fast-check` to devDependencies
     - Add `fast-check` to `devDependencies` in `package.json`
     - _Requirements: (testing infrastructure)_
 
@@ -289,7 +289,7 @@ Restructure the project for production-grade development, migrate the database f
     - **Property 12: Invalid device credentials always return 401**
     - **Validates: Requirements 12.6**
 
-- [ ] 15. Final checkpoint — Ensure all tests pass
+- [x] 15. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
