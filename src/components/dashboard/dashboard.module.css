@@ -49,7 +49,9 @@
 }
 
 .navLink {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   padding: 0.7rem 0.9rem;
   border-radius: var(--radius);
   color: var(--muted);

@@ -1,4 +1,16 @@
 import Link from "next/link";
+import {
+  Droplets,
+  Sprout,
+  Fish,
+  Camera,
+  Bug,
+  Zap,
+  Activity,
+  Cpu,
+  BarChart3,
+  Shield,
+} from "lucide-react";
 import styles from "./landing-page.module.css";
 
 export function LandingPage() {
@@ -70,7 +82,9 @@ export function LandingPage() {
         <div className={styles.featureGrid}>
           {FEATURES.map((f) => (
             <article key={f.title} className={styles.featureCard}>
-              <div className={styles.featureIcon}>{f.icon}</div>
+              <div className={styles.featureIcon}>
+                <f.icon size={22} strokeWidth={1.5} />
+              </div>
               <h3 className={styles.featureTitle}>{f.title}</h3>
               <p className={styles.featureDesc}>{f.desc}</p>
             </article>
@@ -108,12 +122,12 @@ export function LandingPage() {
 }
 
 const FEATURES = [
-  { icon: "💧", title: "Smart Water Supply", desc: "Ultrasonic tank level sensors with automatic pump control and overflow protection." },
-  { icon: "🌱", title: "Precision Irrigation", desc: "Capacitive soil moisture sensors trigger irrigation valves only when crops need water." },
-  { icon: "🐟", title: "Aquaculture Monitoring", desc: "Turbidity and fish tank level sensors with auto-flush and inlet valve management." },
-  { icon: "📷", title: "Weed Detection", desc: "ESP32-CAM captures field snapshots so farmers can visually inspect for weeds remotely." },
-  { icon: "🦟", title: "Pest Control", desc: "Scheduled spray pump and UV zapper with RTC-driven automation and activity logging." },
-  { icon: "⚡", title: "Solar Powered", desc: "Fully off-grid operation with battery voltage monitoring and 24/7 uptime." },
+  { icon: Droplets,  title: "Smart Water Supply",    desc: "Ultrasonic tank level sensors with automatic pump control and overflow protection." },
+  { icon: Sprout,    title: "Precision Irrigation",  desc: "Capacitive soil moisture sensors trigger irrigation valves only when crops need water." },
+  { icon: Fish,      title: "Aquaculture Monitoring", desc: "Turbidity and fish tank level sensors with auto-flush and inlet valve management." },
+  { icon: Camera,    title: "Weed Detection",         desc: "ESP32-CAM captures field snapshots so farmers can visually inspect for weeds remotely." },
+  { icon: Bug,       title: "Pest Control",           desc: "Scheduled spray pump and UV zapper with RTC-driven automation and activity logging." },
+  { icon: Zap,       title: "Solar Powered",          desc: "Fully off-grid operation with battery voltage monitoring and 24/7 uptime." },
 ];
 
 const STATS = [

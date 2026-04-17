@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Cpu, AlertTriangle, Droplets, Sprout, Plus, Wifi, WifiOff } from "lucide-react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
 import { formatRelativeTime } from "@/lib/utils";
@@ -55,12 +56,18 @@ export function DashboardHome({ initialSnapshot }: Props) {
       <header className={styles.topbar}>
         <div>
           <p className={styles.eyebrow}>Live overview</p>
-          <h1>{snapshot.user.farmName} dashboard</h1>
-          <p className={styles.muted}>Monitor controller uptime, water systems, soil signals, and pending field alerts.</p>
+          <h1 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 700 }}>{snapshot.user.farmName} dashboard</h1>
+          <p className={styles.muted} style={{ margin: "0.2rem 0 0", fontSize: "0.85rem" }}>
+            Monitor controller uptime, water systems, soil signals, and pending field alerts.
+          </p>
         </div>
         <div className={styles.actions}>
-          <Link className={styles.button} href="/dashboard/settings">
-            Add Controller
+          <span style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem", color: connected ? "var(--success)" : "var(--muted)" }}>
+            {connected ? <Wifi size={14} /> : <WifiOff size={14} />}
+            {connected ? "Live" : "Polling"}
+          </span>
+          <Link className={styles.button} href="/dashboard/settings" style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <Plus size={15} strokeWidth={2.5} /> Add Controller
           </Link>
         </div>
       </header>
@@ -68,30 +75,41 @@ export function DashboardHome({ initialSnapshot }: Props) {
       <section className={styles.section}>
         <div className={styles.summaryGrid}>
           <article className={styles.summaryCard}>
-            <p className={styles.eyebrow}>Controllers</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+              <Cpu size={14} />
+              <p className={styles.eyebrow} style={{ margin: 0 }}>Controllers</p>
+            </div>
             <strong>{snapshot.summary.controllerCount}</strong>
-            <p className={styles.muted}>
+            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
               {snapshot.summary.onlineControllers} online,{" "}
-              {snapshot.summary.controllerCount - snapshot.summary.onlineControllers} not currently online
+              {snapshot.summary.controllerCount - snapshot.summary.onlineControllers} offline
             </p>
           </article>
           <article className={styles.summaryCard}>
-            <p className={styles.eyebrow}>Alerts</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+              <AlertTriangle size={14} />
+              <p className={styles.eyebrow} style={{ margin: 0 }}>Alerts</p>
+            </div>
             <strong>{snapshot.summary.criticalAlerts + snapshot.summary.warningAlerts}</strong>
-            <p className={styles.muted}>
-              {snapshot.summary.criticalAlerts} critical, {snapshot.summary.warningAlerts} warning
-              {snapshot.summary.warningAlerts === 1 ? "" : "s"}
+            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
+              {snapshot.summary.criticalAlerts} critical, {snapshot.summary.warningAlerts} warning{snapshot.summary.warningAlerts === 1 ? "" : "s"}
             </p>
           </article>
           <article className={styles.summaryCard}>
-            <p className={styles.eyebrow}>Tank Average</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+              <Droplets size={14} />
+              <p className={styles.eyebrow} style={{ margin: 0 }}>Tank Average</p>
+            </div>
             <strong>{snapshot.summary.avgTankLevel ?? "--"}%</strong>
-            <p className={styles.muted}>Across registered tank channels</p>
+            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>Across registered tank channels</p>
           </article>
           <article className={styles.summaryCard}>
-            <p className={styles.eyebrow}>Soil Average</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+              <Sprout size={14} />
+              <p className={styles.eyebrow} style={{ margin: 0 }}>Soil Average</p>
+            </div>
             <strong>{snapshot.summary.avgSoilMoisture ?? "--"}%</strong>
-            <p className={styles.muted}>
+            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
               {snapshot.summary.openCommands} manual command{snapshot.summary.openCommands === 1 ? "" : "s"} pending
             </p>
           </article>
@@ -101,9 +119,12 @@ export function DashboardHome({ initialSnapshot }: Props) {
       <section className={styles.metricGrid}>
         <div className={styles.section}>
           <div className={styles.sectionHead}>
-            <div>
-              <p className={styles.eyebrow}>Controllers</p>
-              <h2>ESP32 fleet</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Cpu size={16} style={{ color: "var(--muted)" }} />
+              <div>
+                <p className={styles.eyebrow}>Controllers</p>
+                <h2 style={{ margin: 0, fontSize: "1.1rem" }}>ESP32 fleet</h2>
+              </div>
             </div>
           </div>
 
@@ -150,9 +171,12 @@ export function DashboardHome({ initialSnapshot }: Props) {
 
         <aside className={styles.section}>
           <div className={styles.sectionHead}>
-            <div>
-              <p className={styles.eyebrow}>Attention</p>
-              <h2>Open alerts</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <AlertTriangle size={16} style={{ color: "var(--muted)" }} />
+              <div>
+                <p className={styles.eyebrow}>Attention</p>
+                <h2 style={{ margin: 0, fontSize: "1.1rem" }}>Open alerts</h2>
+              </div>
             </div>
           </div>
           <div className={styles.alertList}>
