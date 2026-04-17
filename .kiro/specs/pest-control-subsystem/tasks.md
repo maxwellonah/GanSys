@@ -152,7 +152,7 @@ Restructure the project for production-grade development, migrate the database f
     - **Property 4: Camera snapshot payload round-trip**
     - **Validates: Requirements 4.2**
 
-- [ ] 7. Add pest control activity log
+- [x] 7. Add pest control activity log
   - [x] 7.1 Add `getPestControlLog(controllerId, limit)` to `src/lib/data.ts`
     - Query `telemetrySamples` joined with `channels` where `template IN ('spray_pump', 'uv_zapper')` for the given controller
     - Order by `recordedAt` descending, limit to 20
@@ -170,58 +170,58 @@ Restructure the project for production-grade development, migrate the database f
 - [x] 8. Checkpoint — Ensure all data layer tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Implement MQTT client
-  - [ ] 9.1 Create `src/lib/mqtt.ts` singleton MQTT client
+- [x] 9. Implement MQTT client
+  - [x] 9.1 Create `src/lib/mqtt.ts` singleton MQTT client
     - Connect to the broker using `MQTT_BROKER_URL` env var via the existing `mqtt` npm package
     - Subscribe to `gansys/+/readings` and `gansys/+/acks` at QoS 1
     - Parse the hardware ID from the topic string on each message
     - _Requirements: 12.1_
 
-  - [ ] 9.2 Wire MQTT readings handler
+  - [x] 9.2 Wire MQTT readings handler
     - On `gansys/+/readings`: look up controller by `hardwareId`, call `deviceSync`, publish the response to `gansys/{hardwareId}/commands` with `retain: true`
     - _Requirements: 12.1, 12.2, 12.3_
 
-  - [ ] 9.3 Wire MQTT acks handler and export `publishCommands`
+  - [x] 9.3 Wire MQTT acks handler and export `publishCommands`
     - On `gansys/+/acks`: call `applyAcknowledgements`, broadcast WebSocket update via `broadcastToUser`
     - Export `publishCommands(hardwareId, payload)` for use by API routes
     - _Requirements: 12.7, 11.9_
 
-- [ ] 10. Implement WebSocket server
-  - [ ] 10.1 Create WebSocket server entry point
+- [x] 10. Implement WebSocket server
+  - [x] 10.1 Create WebSocket server entry point
     - Create `app/api/ws/route.ts` (or custom Next.js server entry) using the `ws` npm package
     - Maintain `Map<userId, Set<WebSocket>>` for per-user broadcast
     - Validate session cookie on connect; close with 401 if invalid
     - _Requirements: 11.7_
 
-  - [ ] 10.2 Export `broadcastToUser` for use by data layer and MQTT client
+  - [x] 10.2 Export `broadcastToUser` for use by data layer and MQTT client
     - Implement `broadcastToUser(userId: string, message: WsMessage): void` that serialises and sends to all sockets for that user
     - Handle disconnected sockets by removing them from the map
     - _Requirements: 11.7, 11.9_
 
-- [ ] 11. Update settings page for new templates and presets
-  - [ ] 11.1 Update `buildDeviceSyncExample` in `src/components/dashboard/settings-view.tsx`
+- [x] 11. Update settings page for new templates and presets
+  - [x] 11.1 Update `buildDeviceSyncExample` in `src/components/dashboard/settings-view.tsx`
     - Add cases for `spray_pump` and `uv_zapper`: return `{ channelKey, booleanState: false, numericValue: 0, status: "ok" }`
     - Add case for `camera_snapshot`: return `{ channelKey, payload: { imageUrl: "https://example.com/snapshot.jpg" }, status: "ok" }`
     - _Requirements: 7.6, 10.4_
 
-  - [ ] 11.2 Verify template selector and preset dropdowns include new entries
+  - [x] 11.2 Verify template selector and preset dropdowns include new entries
     - Confirm `CHANNEL_TEMPLATES` iteration in the template `<select>` renders `spray_pump`, `uv_zapper`, `camera_snapshot`
     - Confirm `CONTROLLER_SETUP_PRESETS` iteration in bundle dropdowns renders `pest_control`
     - No code changes needed if the selects already iterate the arrays — add a targeted test instead
     - _Requirements: 7.6, 10.4_
 
-- [ ] 12. Update controller detail UI
-  - [ ] 12.1 Exclude `camera_snapshot` channels from `getCardGroups` sensor/actuator grouping
+- [x] 12. Update controller detail UI
+  - [x] 12.1 Exclude `camera_snapshot` channels from `getCardGroups` sensor/actuator grouping
     - In `getCardGroups` in `controller-detail.tsx`, filter out channels with `template === "camera_snapshot"` from both `primaryChannels` and `actuators` before building groups
     - _Requirements: 4.6_
 
-  - [ ] 12.2 Add camera snapshot card rendering
+  - [x] 12.2 Add camera snapshot card rendering
     - After the `groups` and `standaloneActuators` sections, render a separate card for each `camera_snapshot` channel
     - Display the image from `snapshot.latestSnapshots[channel.id]` or a "No snapshot yet" placeholder
     - Show channel name and `lastSampleAt` timestamp
     - _Requirements: 4.3, 4.4, 4.5_
 
-  - [ ] 12.3 Add Pest Control Schedule panel component
+  - [x] 12.3 Add Pest Control Schedule panel component
     - Render only when the controller has at least one `spray_pump` or `uv_zapper` channel
     - On mount, `GET /api/controllers/{id}/pest-schedule` and populate form state
     - Form fields: `enabled` checkbox, spray time slots list (start time + duration + remove button + add slot button), UV zapper start/end time inputs
@@ -229,32 +229,32 @@ Restructure the project for production-grade development, migrate the database f
     - Display "No schedule set" when schedule is null
     - _Requirements: 8.1, 8.2, 8.3, 8.6_
 
-  - [ ] 12.4 Add Pest Control Activity Log panel component
+  - [x] 12.4 Add Pest Control Activity Log panel component
     - Render only when the controller has at least one `spray_pump` or `uv_zapper` channel
     - Populate from `snapshot.pestLog` (already fetched in the controller snapshot)
     - Each row: channel name, activation type, state (On/Off), relative timestamp
     - Display "No activity yet" when `pestLog` is empty
     - _Requirements: 9.1, 9.2, 9.3, 9.5_
 
-  - [ ] 12.5 Add CSS classes for new panels to `dashboard.module.css`
+  - [x] 12.5 Add CSS classes for new panels to `dashboard.module.css`
     - Add styles for the camera snapshot card image container
     - Add styles for the pest schedule panel (slot list, time inputs)
     - Add styles for the pest activity log panel (log rows)
     - _Requirements: 4.3, 8.1, 9.1_
 
-- [ ] 13. Add WebSocket context and replace polling
-  - [ ] 13.1 Create `src/lib/ws-context.tsx` React context
+- [x] 13. Add WebSocket context and replace polling
+  - [x] 13.1 Create `src/lib/ws-context.tsx` React context
     - Wrap a `WebSocket` connection with `subscribe(controllerId)` / `unsubscribe(controllerId)` / `lastMessage` API
     - Reconnect automatically on disconnect
     - _Requirements: 11.7_
 
-  - [ ] 13.2 Replace polling in `dashboard-home.tsx` with WebSocket subscription
+  - [x] 13.2 Replace polling in `dashboard-home.tsx` with WebSocket subscription
     - Subscribe to controller updates on mount via `WsContext`
     - On `controller_update` message, update snapshot state
     - Keep the existing 5-second `setInterval` as a fallback when WebSocket is disconnected
     - _Requirements: 1.2_
 
-  - [ ] 13.3 Replace polling in `controller-detail.tsx` with WebSocket subscription
+  - [x] 13.3 Replace polling in `controller-detail.tsx` with WebSocket subscription
     - Subscribe to the controller's ID on mount via `WsContext`
     - On `controller_update`, `snapshot_update`, and `pest_log_entry` messages, update local state
     - Keep the existing 3-second `setInterval` as a fallback when WebSocket is disconnected

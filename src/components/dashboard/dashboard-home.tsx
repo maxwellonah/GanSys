@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
 import { formatRelativeTime } from "@/lib/utils";
+import { useWs } from "@/lib/ws-context";
 import type { DashboardSnapshot } from "@/lib/types";
 
 type Props = {
@@ -12,40 +13,42 @@ type Props = {
 };
 
 function statusClass(status: string) {
-  if (status === "online") {
-    return styles.online;
-  }
-  if (status === "stale") {
-    return styles.stale;
-  }
+  if (status === "online") return styles.online;
+  if (status === "stale") return styles.stale;
   return styles.offline;
 }
 
 function alertClass(severity: string) {
-  if (severity === "critical") {
-    return styles.alertCritical;
-  }
-  if (severity === "warning") {
-    return styles.alertWarning;
-  }
+  if (severity === "critical") return styles.alertCritical;
+  if (severity === "warning") return styles.alertWarning;
   return styles.alertInfo;
 }
 
 export function DashboardHome({ initialSnapshot }: Props) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const { lastMessage, connected } = useWs();
 
+  // React to real-time controller_update messages from WebSocket
   useEffect(() => {
+    if (!lastMessage || lastMessage.type !== "controller_update") return;
+    setSnapshot((prev) => ({
+      ...prev,
+      controllers: prev.controllers.map((c) =>
+        c.id === lastMessage.data.id ? lastMessage.data : c
+      ),
+    }));
+  }, [lastMessage]);
+
+  // Fallback polling when WebSocket is disconnected
+  useEffect(() => {
+    if (connected) return;
     const interval = window.setInterval(async () => {
       const response = await fetch("/api/controllers", { cache: "no-store" });
-      if (!response.ok) {
-        return;
-      }
-      const data = (await response.json()) as DashboardSnapshot;
-      setSnapshot(data);
+      if (!response.ok) return;
+      setSnapshot((await response.json()) as DashboardSnapshot);
     }, 5_000);
-
     return () => window.clearInterval(interval);
-  }, []);
+  }, [connected]);
 
   return (
     <>

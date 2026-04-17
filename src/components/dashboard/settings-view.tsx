@@ -37,6 +37,16 @@ function buildDeviceSyncExample(controller: ControllerCard) {
           return { channelKey: channel.channelKey, numericValue: 81, rawValue: 24, rawUnit: "cm", status: "ok" };
         case "battery_voltage":
           return { channelKey: channel.channelKey, numericValue: 12.4, rawValue: 12.4, rawUnit: "V", status: "ok" };
+        case "spray_pump":
+        case "uv_zapper":
+          return { channelKey: channel.channelKey, booleanState: false, numericValue: 0, status: "ok" };
+        case "camera_snapshot":
+          return { channelKey: channel.channelKey, payload: { imageUrl: "https://example.com/snapshot.jpg" }, status: "ok" };
+        case "spray_pump":
+        case "uv_zapper":
+          return { channelKey: channel.channelKey, booleanState: false, numericValue: 0, status: "ok" };
+        case "camera_snapshot":
+          return { channelKey: channel.channelKey, payload: { imageUrl: "https://example.com/snapshot.jpg" }, status: "ok" };
         case "pump":
         case "irrigation_valve":
         case "flush_valve":

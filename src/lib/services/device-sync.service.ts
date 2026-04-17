@@ -36,9 +36,9 @@ export type DeviceSyncBody = {
   acknowledgements?: DeviceAckInput[];
 };
 
-export function deviceSync(hardwareId: string, deviceKey: string, payload: DeviceSyncBody) {
+export function deviceSync(hardwareId: string, deviceKey: string, payload: DeviceSyncBody, skipAuth = false) {
   const controller = db.select().from(controllers).where(eq(controllers.hardwareId, hardwareId)).get();
-  if (!controller || controller.deviceKeyHash !== hashToken(deviceKey)) {
+  if (!controller || (!skipAuth && controller.deviceKeyHash !== hashToken(deviceKey))) {
     throw new Error("Unauthorized device.");
   }
 
