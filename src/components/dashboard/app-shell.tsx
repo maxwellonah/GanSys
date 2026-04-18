@@ -28,7 +28,7 @@ export function AppShell({ user, children }: Props) {
       <aside className={styles.sidebar}>
         <div>
           <div className={styles.brand}>
-            <div className={styles.brandOrb} />
+            <img src="/icon.svg" alt="GanSystems logo" className={styles.brandOrb} />
             <div>
               <p className={styles.eyebrow}>GanSystems</p>
               <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>Control Hub</h2>

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
+import { ScopedErrorBoundary } from "@/components/system/scoped-error-boundary";
 import { formatRelativeTime } from "@/lib/utils";
 import { useWs } from "@/lib/ws-context";
 import type {
@@ -224,7 +225,12 @@ export function ControllerDetail({ initialSnapshot }: Props) {
       {message && <p className={styles.muted} style={{ padding: "0 0.2rem", fontSize: "0.85rem" }}>{message}</p>}
 
       {/* Sensor + actuator cards */}
-      <section className={styles.sensorGrid}>
+      <ScopedErrorBoundary
+        badge="Controller channels"
+        title="Channel cards are unavailable"
+        message="This controller page is still active, but the live channel section failed to render."
+      >
+        <section className={styles.sensorGrid}>
         {groups.map(({ primary, controls }) => (
           <article key={primary.id} className={styles.sensorCard}>
             <div className={styles.rowBetween}>
@@ -311,122 +317,163 @@ export function ControllerDetail({ initialSnapshot }: Props) {
             </article>
           );
         })}
-      </section>
+        </section>
+      </ScopedErrorBoundary>
 
       {/* Camera snapshot cards */}
-      {cameraChannels.map((ch) => {
-        const snap = snapshot.latestSnapshots?.[ch.id];
-        const imgSrc = snap?.imageUrl ?? snap?.imageBase64 ?? null;
-        return (
-          <article key={ch.id} className={`${styles.panel} ${styles.snapshotPanel}`}>
-            <div className={styles.sectionHead}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <Camera size={16} style={{ color: "var(--muted)" }} />
-                <div>
-                  <p className={styles.eyebrow}>Camera snapshot</p>
-                  <h2 style={{ margin: 0, fontSize: "1rem" }}>{ch.name}</h2>
-                </div>
-              </div>
-            </div>
-            {imgSrc
-              ? <img src={imgSrc} alt={ch.name} className={styles.snapshotImage} />
-              : <div className={styles.empty}>No snapshot yet.</div>}
-            <p className={styles.small} style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-              <Clock size={11} /> Updated {formatRelativeTime(ch.lastSampleAt)}
-            </p>
-          </article>
-        );
-      })}
+      {cameraChannels.length ? (
+        <ScopedErrorBoundary
+          badge="Camera feed"
+          title="Snapshot cards are unavailable"
+          message="The camera resource failed to render, but the rest of the controller page is still available."
+        >
+          <>
+            {cameraChannels.map((ch) => {
+              const snap = snapshot.latestSnapshots?.[ch.id];
+              const imgSrc = snap?.imageUrl ?? snap?.imageBase64 ?? null;
+              return (
+                <article key={ch.id} className={`${styles.panel} ${styles.snapshotPanel}`}>
+                  <div className={styles.sectionHead}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <Camera size={16} style={{ color: "var(--muted)" }} />
+                      <div>
+                        <p className={styles.eyebrow}>Camera snapshot</p>
+                        <h2 style={{ margin: 0, fontSize: "1rem" }}>{ch.name}</h2>
+                      </div>
+                    </div>
+                  </div>
+                  {imgSrc
+                    ? <img src={imgSrc} alt={ch.name} className={styles.snapshotImage} />
+                    : <div className={styles.empty}>No snapshot yet.</div>}
+                  <p className={styles.small} style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                    <Clock size={11} /> Updated {formatRelativeTime(ch.lastSampleAt)}
+                  </p>
+                </article>
+              );
+            })}
+          </>
+        </ScopedErrorBoundary>
+      ) : null}
 
       {/* History + Alerts + Commands */}
       <section className={styles.metricGrid}>
-        <article className={`${styles.panel} ${styles.chartPanel}`}>
-          <div className={styles.sectionHead}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <History size={16} style={{ color: "var(--muted)" }} />
-              <div>
-                <p className={styles.eyebrow}>History</p>
-                <h2 style={{ margin: 0, fontSize: "1rem" }}>Sensor trends</h2>
+        <ScopedErrorBoundary
+          badge="History chart"
+          title="Sensor trends are unavailable"
+          message="The trend chart failed in this panel only. The rest of the controller page is still running."
+        >
+          <article className={`${styles.panel} ${styles.chartPanel}`}>
+            <div className={styles.sectionHead}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <History size={16} style={{ color: "var(--muted)" }} />
+                <div>
+                  <p className={styles.eyebrow}>History</p>
+                  <h2 style={{ margin: 0, fontSize: "1rem" }}>Sensor trends</h2>
+                </div>
+              </div>
+              <div className={styles.actions}>
+                <select value={selectedChannelId ?? ""} onChange={(e) => setSelectedChannelId(e.target.value)}>
+                  {numericChannels.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+                <select value={range} onChange={(e) => setRange(e.target.value as Range)}>
+                  <option value="24h">24 hours</option>
+                  <option value="7d">7 days</option>
+                  <option value="30d">30 days</option>
+                </select>
               </div>
             </div>
-            <div className={styles.actions}>
-              <select value={selectedChannelId ?? ""} onChange={(e) => setSelectedChannelId(e.target.value)}>
-                {numericChannels.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <select value={range} onChange={(e) => setRange(e.target.value as Range)}>
-                <option value="24h">24 hours</option>
-                <option value="7d">7 days</option>
-                <option value="30d">30 days</option>
-              </select>
+            <div className={styles.chartWrap}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={history}>
+                  <XAxis dataKey="recordedAt" tick={{ fontSize: 11, fill: "var(--muted)" }} minTickGap={24} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--muted)" }} width={36} />
+                  <Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--line-strong)", borderRadius: "8px", color: "var(--text)" }} />
+                  <Line type="monotone" dataKey="numericValue" stroke="var(--primary)" strokeWidth={2.5} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-          </div>
-          <div className={styles.chartWrap}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={history}>
-                <XAxis dataKey="recordedAt" tick={{ fontSize: 11, fill: "var(--muted)" }} minTickGap={24} />
-                <YAxis tick={{ fontSize: 11, fill: "var(--muted)" }} width={36} />
-                <Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--line-strong)", borderRadius: "8px", color: "var(--text)" }} />
-                <Line type="monotone" dataKey="numericValue" stroke="var(--primary)" strokeWidth={2.5} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
+          </article>
+        </ScopedErrorBoundary>
 
         <div className={styles.section}>
-          <article className={styles.panel}>
-            <div className={styles.sectionHead}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <Bell size={15} style={{ color: "var(--muted)" }} />
-                <div>
-                  <p className={styles.eyebrow}>Alerts</p>
-                  <h2 style={{ margin: 0, fontSize: "1rem" }}>Active issues</h2>
-                </div>
-              </div>
-            </div>
-            <div className={styles.alertList}>
-              {snapshot.alerts.length ? snapshot.alerts.map((alert) => (
-                <article key={alert.id} className={`${styles.alertCard} ${alertClass(alert.severity)}`}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <AlertTriangle size={13} />
-                    <strong style={{ fontSize: "0.88rem" }}>{alert.title}</strong>
+          <ScopedErrorBoundary
+            badge="Controller alerts"
+            title="Active issues are unavailable"
+            message="Only the alerts panel failed here. Other controller resources are still available."
+          >
+            <article className={styles.panel}>
+              <div className={styles.sectionHead}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <Bell size={15} style={{ color: "var(--muted)" }} />
+                  <div>
+                    <p className={styles.eyebrow}>Alerts</p>
+                    <h2 style={{ margin: 0, fontSize: "1rem" }}>Active issues</h2>
                   </div>
-                  <p className={styles.muted} style={{ margin: "0.2rem 0 0", fontSize: "0.82rem" }}>{alert.message}</p>
-                  <p className={styles.small} style={{ margin: "0.2rem 0 0" }}>{formatRelativeTime(alert.openedAt)}</p>
-                </article>
-              )) : <div className={styles.empty}>No open alerts for this controller.</div>}
-            </div>
-          </article>
-
-          <article className={styles.panel}>
-            <div className={styles.sectionHead}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <ChevronRight size={15} style={{ color: "var(--muted)" }} />
-                <div>
-                  <p className={styles.eyebrow}>Commands</p>
-                  <h2 style={{ margin: 0, fontSize: "1rem" }}>Recent log</h2>
                 </div>
               </div>
-            </div>
-            <div className={styles.commandList}>
-              {snapshot.commands.length ? snapshot.commands.map((cmd) => (
-                <div key={cmd.id} className={styles.card}>
-                  <strong style={{ fontSize: "0.88rem" }}>{cmd.commandType}</strong>
-                  <p className={styles.muted} style={{ margin: "0.2rem 0 0", fontSize: "0.82rem" }}>
-                    {cmd.desiredBooleanState !== null ? `State: ${cmd.desiredBooleanState ? "On" : "Off"}` : `Value: ${cmd.desiredNumericValue}`}
-                  </p>
-                  <p className={styles.small} style={{ margin: "0.2rem 0 0" }}>{cmd.status} · {formatRelativeTime(cmd.createdAt)}</p>
+              <div className={styles.alertList}>
+                {snapshot.alerts.length ? snapshot.alerts.map((alert) => (
+                  <article key={alert.id} className={`${styles.alertCard} ${alertClass(alert.severity)}`}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <AlertTriangle size={13} />
+                      <strong style={{ fontSize: "0.88rem" }}>{alert.title}</strong>
+                    </div>
+                    <p className={styles.muted} style={{ margin: "0.2rem 0 0", fontSize: "0.82rem" }}>{alert.message}</p>
+                    <p className={styles.small} style={{ margin: "0.2rem 0 0" }}>{formatRelativeTime(alert.openedAt)}</p>
+                  </article>
+                )) : <div className={styles.empty}>No open alerts for this controller.</div>}
+              </div>
+            </article>
+          </ScopedErrorBoundary>
+
+          <ScopedErrorBoundary
+            badge="Command log"
+            title="Recent commands are unavailable"
+            message="The command log failed in-place, but the rest of the controller page is still available."
+          >
+            <article className={styles.panel}>
+              <div className={styles.sectionHead}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <ChevronRight size={15} style={{ color: "var(--muted)" }} />
+                  <div>
+                    <p className={styles.eyebrow}>Commands</p>
+                    <h2 style={{ margin: 0, fontSize: "1rem" }}>Recent log</h2>
+                  </div>
                 </div>
-              )) : <div className={styles.empty}>No commands issued yet.</div>}
-            </div>
-          </article>
+              </div>
+              <div className={styles.commandList}>
+                {snapshot.commands.length ? snapshot.commands.map((cmd) => (
+                  <div key={cmd.id} className={styles.card}>
+                    <strong style={{ fontSize: "0.88rem" }}>{cmd.commandType}</strong>
+                    <p className={styles.muted} style={{ margin: "0.2rem 0 0", fontSize: "0.82rem" }}>
+                      {cmd.desiredBooleanState !== null ? `State: ${cmd.desiredBooleanState ? "On" : "Off"}` : `Value: ${cmd.desiredNumericValue}`}
+                    </p>
+                    <p className={styles.small} style={{ margin: "0.2rem 0 0" }}>{cmd.status} · {formatRelativeTime(cmd.createdAt)}</p>
+                  </div>
+                )) : <div className={styles.empty}>No commands issued yet.</div>}
+              </div>
+            </article>
+          </ScopedErrorBoundary>
         </div>
       </section>
 
       {/* Pest Control */}
       {hasPestControl && (
         <section className={styles.metricGrid}>
-          <PestSchedulePanel controllerId={snapshot.controller.id} />
-          <PestLogPanel pestLog={snapshot.pestLog ?? []} />
+          <ScopedErrorBoundary
+            badge="Pest schedule"
+            title="Pest schedule is unavailable"
+            message="The schedule panel failed in-place, but the rest of the controller page is still available."
+          >
+            <PestSchedulePanel controllerId={snapshot.controller.id} />
+          </ScopedErrorBoundary>
+          <ScopedErrorBoundary
+            badge="Pest activity"
+            title="Pest activity log is unavailable"
+            message="The activity panel failed in-place, but other controller resources are still available."
+          >
+            <PestLogPanel pestLog={snapshot.pestLog ?? []} />
+          </ScopedErrorBoundary>
         </section>
       )}
     </>

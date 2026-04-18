@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
+import { ScopedErrorBoundary } from "@/components/system/scoped-error-boundary";
 import { CHANNEL_TEMPLATES, CONTROLLER_SETUP_PRESETS, getSetupPreset, getTemplate, type SetupPreset } from "@/lib/templates";
 import type { ControllerCard, DashboardSnapshot } from "@/lib/types";
 
@@ -446,6 +447,11 @@ export function SettingsView({ initialSnapshot }: Props) {
       ) : null}
 
       <section className={styles.settingsGrid}>
+        <ScopedErrorBoundary
+          badge="Quick start"
+          title="Quick start panel is unavailable"
+          message="The onboarding resource failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel} ${styles.settingsWide}`}>
           <div>
             <p className={styles.eyebrow}>Quick start</p>
@@ -511,7 +517,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             </div>
           </div>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Account profile"
+          title="Profile settings are unavailable"
+          message="The account profile section failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel} ${styles.settingsWide}`}>
           <div>
             <p className={styles.eyebrow}>Account profile</p>
@@ -546,7 +558,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             </button>
           </form>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Controller registration"
+          title="Controller registration is unavailable"
+          message="The controller form failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>Add ESP32</p>
@@ -615,9 +633,15 @@ export function SettingsView({ initialSnapshot }: Props) {
             </button>
           </div>
         </article>
+        </ScopedErrorBoundary>
       </section>
 
       <section className={styles.settingsGrid}>
+        <ScopedErrorBoundary
+          badge="ESP32 guide"
+          title="ESP32 guide is unavailable"
+          message="The sync contract panel failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>ESP32 guide</p>
@@ -696,7 +720,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             )}
           </div>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Channel setup"
+          title="Channel setup is unavailable"
+          message="The channel configuration form failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>Add channel</p>
@@ -766,7 +796,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             </button>
           </div>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Inventory"
+          title="Controller inventory is unavailable"
+          message="The inventory panel failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>Current inventory</p>
@@ -882,6 +918,7 @@ export function SettingsView({ initialSnapshot }: Props) {
             )}
           </div>
         </article>
+        </ScopedErrorBoundary>
       </section>
     </>
   );

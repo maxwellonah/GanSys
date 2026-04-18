@@ -5,6 +5,14 @@
   padding: 2rem;
 }
 
+.inline {
+  width: 100%;
+}
+
+.inline .card {
+  width: 100%;
+}
+
 .card {
   width: min(100%, 42rem);
   padding: 2rem;

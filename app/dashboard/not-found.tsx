@@ -3,6 +3,7 @@ import { ErrorState } from "@/components/system/error-state";
 export default function DashboardNotFound() {
   return (
     <ErrorState
+      fillViewport={false}
       badge="Dashboard route missing"
       tone="warning"
       title="That dashboard page was not found"

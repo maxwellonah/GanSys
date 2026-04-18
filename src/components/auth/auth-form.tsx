@@ -52,7 +52,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       {/* Left — branding */}
       <aside className={styles.brand}>
         <div className={styles.brandTop}>
-          <span className={styles.brandOrb} />
+          <img src="/icon.svg" alt="GanSystems logo" className={styles.brandOrb} />
           <span className={styles.brandName}>GanSystems</span>
         </div>
 

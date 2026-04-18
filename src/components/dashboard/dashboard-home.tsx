@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Cpu, AlertTriangle, Droplets, Sprout, Plus, Wifi, WifiOff } from "lucide-react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
+import { ScopedErrorBoundary } from "@/components/system/scoped-error-boundary";
 import { formatRelativeTime } from "@/lib/utils";
 import { useWs } from "@/lib/ws-context";
 import type { DashboardSnapshot } from "@/lib/types";
@@ -84,130 +85,148 @@ export function DashboardHome({ initialSnapshot }: Props) {
         </div>
       </header>
 
-      <section className={styles.section}>
-        <div className={styles.summaryGrid}>
-          <article className={styles.summaryCard}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
-              <Cpu size={14} />
-              <p className={styles.eyebrow} style={{ margin: 0 }}>Controllers</p>
-            </div>
-            <strong>{safeSnapshot.summary?.controllerCount ?? 0}</strong>
-            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
-              {safeSnapshot.summary?.onlineControllers ?? 0} online,{" "}
-              {(safeSnapshot.summary?.controllerCount ?? 0) - (safeSnapshot.summary?.onlineControllers ?? 0)} offline
-            </p>
-          </article>
-          <article className={styles.summaryCard}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
-              <AlertTriangle size={14} />
-              <p className={styles.eyebrow} style={{ margin: 0 }}>Alerts</p>
-            </div>
-            <strong>{(safeSnapshot.summary?.criticalAlerts ?? 0) + (safeSnapshot.summary?.warningAlerts ?? 0)}</strong>
-            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
-              {safeSnapshot.summary?.criticalAlerts ?? 0} critical, {safeSnapshot.summary?.warningAlerts ?? 0} warning{(safeSnapshot.summary?.warningAlerts ?? 0) === 1 ? "" : "s"}
-            </p>
-          </article>
-          <article className={styles.summaryCard}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
-              <Droplets size={14} />
-              <p className={styles.eyebrow} style={{ margin: 0 }}>Tank Average</p>
-            </div>
-            <strong>{safeSnapshot.summary?.avgTankLevel ?? "--"}%</strong>
-            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>Across registered tank channels</p>
-          </article>
-          <article className={styles.summaryCard}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
-              <Sprout size={14} />
-              <p className={styles.eyebrow} style={{ margin: 0 }}>Soil Average</p>
-            </div>
-            <strong>{safeSnapshot.summary?.avgSoilMoisture ?? "--"}%</strong>
-            <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
-              {safeSnapshot.summary?.openCommands ?? 0} manual command{(safeSnapshot.summary?.openCommands ?? 0) === 1 ? "" : "s"} pending
-            </p>
-          </article>
-        </div>
-      </section>
+      <ScopedErrorBoundary
+        badge="Overview metrics"
+        title="Overview metrics are unavailable"
+        message="The dashboard shell is still active, but the summary cards could not render."
+      >
+        <section className={styles.section}>
+          <div className={styles.summaryGrid}>
+            <article className={styles.summaryCard}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+                <Cpu size={14} />
+                <p className={styles.eyebrow} style={{ margin: 0 }}>Controllers</p>
+              </div>
+              <strong>{safeSnapshot.summary?.controllerCount ?? 0}</strong>
+              <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
+                {safeSnapshot.summary?.onlineControllers ?? 0} online,{" "}
+                {(safeSnapshot.summary?.controllerCount ?? 0) - (safeSnapshot.summary?.onlineControllers ?? 0)} offline
+              </p>
+            </article>
+            <article className={styles.summaryCard}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+                <AlertTriangle size={14} />
+                <p className={styles.eyebrow} style={{ margin: 0 }}>Alerts</p>
+              </div>
+              <strong>{(safeSnapshot.summary?.criticalAlerts ?? 0) + (safeSnapshot.summary?.warningAlerts ?? 0)}</strong>
+              <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
+                {safeSnapshot.summary?.criticalAlerts ?? 0} critical, {safeSnapshot.summary?.warningAlerts ?? 0} warning{(safeSnapshot.summary?.warningAlerts ?? 0) === 1 ? "" : "s"}
+              </p>
+            </article>
+            <article className={styles.summaryCard}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+                <Droplets size={14} />
+                <p className={styles.eyebrow} style={{ margin: 0 }}>Tank Average</p>
+              </div>
+              <strong>{safeSnapshot.summary?.avgTankLevel ?? "--"}%</strong>
+              <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>Across registered tank channels</p>
+            </article>
+            <article className={styles.summaryCard}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--muted)" }}>
+                <Sprout size={14} />
+                <p className={styles.eyebrow} style={{ margin: 0 }}>Soil Average</p>
+              </div>
+              <strong>{safeSnapshot.summary?.avgSoilMoisture ?? "--"}%</strong>
+              <p className={styles.muted} style={{ margin: 0, fontSize: "0.82rem" }}>
+                {safeSnapshot.summary?.openCommands ?? 0} manual command{(safeSnapshot.summary?.openCommands ?? 0) === 1 ? "" : "s"} pending
+              </p>
+            </article>
+          </div>
+        </section>
+      </ScopedErrorBoundary>
 
       <section className={styles.metricGrid}>
-        <div className={styles.section}>
-          <div className={styles.sectionHead}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Cpu size={16} style={{ color: "var(--muted)" }} />
-              <div>
-                <p className={styles.eyebrow}>Controllers</p>
-                <h2 style={{ margin: 0, fontSize: "1.1rem" }}>ESP32 fleet</h2>
+        <ScopedErrorBoundary
+          badge="Controller fleet"
+          title="Controller inventory could not render"
+          message="The dashboard is still available, but the controller list failed in this section."
+        >
+          <div className={styles.section}>
+            <div className={styles.sectionHead}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Cpu size={16} style={{ color: "var(--muted)" }} />
+                <div>
+                  <p className={styles.eyebrow}>Controllers</p>
+                  <h2 style={{ margin: 0, fontSize: "1.1rem" }}>ESP32 fleet</h2>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className={styles.controllerGrid}>
-            {safeSnapshot.controllers.length ? (
-              safeSnapshot.controllers.map((controller) => (
-                <article key={controller.id} className={styles.controllerCard}>
-                  <div className={styles.cardHead}>
-                    <div>
-                      <p className={styles.eyebrow}>{controller.location}</p>
-                      <h3>{controller.name}</h3>
-                      <p className={styles.muted}>
-                        {controller.hardwareId} / Last seen {formatRelativeTime(controller.lastSeenAt)}
-                      </p>
+            <div className={styles.controllerGrid}>
+              {safeSnapshot.controllers.length ? (
+                safeSnapshot.controllers.map((controller) => (
+                  <article key={controller.id} className={styles.controllerCard}>
+                    <div className={styles.cardHead}>
+                      <div>
+                        <p className={styles.eyebrow}>{controller.location}</p>
+                        <h3>{controller.name}</h3>
+                        <p className={styles.muted}>
+                          {controller.hardwareId} / Last seen {formatRelativeTime(controller.lastSeenAt)}
+                        </p>
+                      </div>
+                      <span className={`${styles.status} ${statusClass(controller.status)}`}>{controller.status}</span>
                     </div>
-                    <span className={`${styles.status} ${statusClass(controller.status)}`}>{controller.status}</span>
-                  </div>
 
-                  <div className={styles.tags}>
-                    <span className={styles.tag}>{controller.channelCount} channels</span>
-                    <span className={styles.tag}>{controller.sensorCount} sensors</span>
-                    <span className={styles.tag}>{controller.actuatorCount} actuators</span>
-                    <span className={styles.tag}>{controller.openAlertCount} open alerts</span>
-                  </div>
-
-                  <p className={styles.muted}>{controller.description || "No description yet."}</p>
-
-                  <div className={styles.rowBetween}>
-                    <div className={styles.muted}>
-                      <strong>{controller.firmwareVersion}</strong>
-                      <div className={styles.small}>Firmware</div>
+                    <div className={styles.tags}>
+                      <span className={styles.tag}>{controller.channelCount} channels</span>
+                      <span className={styles.tag}>{controller.sensorCount} sensors</span>
+                      <span className={styles.tag}>{controller.actuatorCount} actuators</span>
+                      <span className={styles.tag}>{controller.openAlertCount} open alerts</span>
                     </div>
-                    <Link className={styles.button} href={`/dashboard/controllers/${controller.id}`}>
-                      Open Controller
-                    </Link>
-                  </div>
-                </article>
-              ))
-            ) : (
-              <div className={styles.empty}>No controllers yet. Open Settings to register your first ESP32.</div>
-            )}
-          </div>
-        </div>
 
-        <aside className={styles.section}>
-          <div className={styles.sectionHead}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <AlertTriangle size={16} style={{ color: "var(--muted)" }} />
-              <div>
-                <p className={styles.eyebrow}>Attention</p>
-                <h2 style={{ margin: 0, fontSize: "1.1rem" }}>Open alerts</h2>
-              </div>
+                    <p className={styles.muted}>{controller.description || "No description yet."}</p>
+
+                    <div className={styles.rowBetween}>
+                      <div className={styles.muted}>
+                        <strong>{controller.firmwareVersion}</strong>
+                        <div className={styles.small}>Firmware</div>
+                      </div>
+                      <Link className={styles.button} href={`/dashboard/controllers/${controller.id}`}>
+                        Open Controller
+                      </Link>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <div className={styles.empty}>No controllers yet. Open Settings to register your first ESP32.</div>
+              )}
             </div>
           </div>
-          <div className={styles.alertList}>
-            {safeSnapshot.alerts.length ? (
-              safeSnapshot.alerts.map((alert) => (
-                <article key={alert.id} className={`${styles.alertCard} ${alertClass(alert.severity)}`}>
-                  <div className={styles.rowBetween}>
-                    <strong>{alert.title}</strong>
-                    <span className={styles.muted}>{alert.severity}</span>
-                  </div>
-                  <p className={styles.muted}>{alert.message}</p>
-                  <p className={styles.small}>{formatRelativeTime(alert.openedAt)}</p>
-                </article>
-              ))
-            ) : (
-              <div className={styles.empty}>No open alerts. The current dashboard state is stable.</div>
-            )}
-          </div>
-        </aside>
+        </ScopedErrorBoundary>
+
+        <ScopedErrorBoundary
+          badge="Alert feed"
+          title="Open alerts could not render"
+          message="The alert panel failed, but the rest of the dashboard is still available."
+        >
+          <aside className={styles.section}>
+            <div className={styles.sectionHead}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <AlertTriangle size={16} style={{ color: "var(--muted)" }} />
+                <div>
+                  <p className={styles.eyebrow}>Attention</p>
+                  <h2 style={{ margin: 0, fontSize: "1.1rem" }}>Open alerts</h2>
+                </div>
+              </div>
+            </div>
+            <div className={styles.alertList}>
+              {safeSnapshot.alerts.length ? (
+                safeSnapshot.alerts.map((alert) => (
+                  <article key={alert.id} className={`${styles.alertCard} ${alertClass(alert.severity)}`}>
+                    <div className={styles.rowBetween}>
+                      <strong>{alert.title}</strong>
+                      <span className={styles.muted}>{alert.severity}</span>
+                    </div>
+                    <p className={styles.muted}>{alert.message}</p>
+                    <p className={styles.small}>{formatRelativeTime(alert.openedAt)}</p>
+                  </article>
+                ))
+              ) : (
+                <div className={styles.empty}>No open alerts. The current dashboard state is stable.</div>
+              )}
+            </div>
+          </aside>
+        </ScopedErrorBoundary>
       </section>
     </>
   );
