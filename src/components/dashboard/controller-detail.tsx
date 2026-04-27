@@ -6,7 +6,7 @@ import {
   Activity, AlertTriangle, Bell, Bug, Calendar, Camera,
   ChevronRight, Clock, Cpu, Droplets, Fish, FlaskConical,
   History, Leaf, Settings, Sprout, Sun, ToggleLeft,
-  ToggleRight, Wifi, WifiOff, Zap, Plus, Minus, Timer, X,
+  ToggleRight, Wifi, WifiOff, Zap, Plus, Minus, Timer, X, Trash2,
 } from "lucide-react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
@@ -180,6 +180,22 @@ export function ControllerDetail({ initialSnapshot }: Props) {
     if (r.ok) setSnapshot((await r.json()) as ControllerSnapshot);
   }
 
+  async function deleteController() {
+    if (!window.confirm(`Are you sure you want to delete "${snapshot.controller.name}"? This will remove all channels and data associated with this controller. This action cannot be undone.`)) {
+      return;
+    }
+    
+    setMessage("Deleting controller...");
+    const r = await fetch(`/api/controllers/${snapshot.controller.id}`, { method: "DELETE" });
+    
+    if (r.ok) {
+      window.location.href = "/dashboard/controllers";
+    } else {
+      const d = await r.json();
+      setMessage(d.error ?? "Failed to delete controller.");
+    }
+  }
+
   async function sendCommand(channel: ChannelView, desiredBooleanState: boolean) {
     setBusyChannelId(channel.id);
     setMessage("");
@@ -219,6 +235,14 @@ export function ControllerDetail({ initialSnapshot }: Props) {
           <a className={styles.ghostButton} href="/dashboard/settings" style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
             <Settings size={14} /> Manage
           </a>
+          <button 
+            className={styles.dangerButton} 
+            type="button"
+            onClick={() => void deleteController()}
+            style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+          >
+            <Trash2 size={14} /> Delete
+          </button>
         </div>
       </header>
 

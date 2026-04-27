@@ -1,12 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { Cpu } from "lucide-react";
+import { useState } from "react";
+import { Cpu, Trash2 } from "lucide-react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
-import { getCurrentUser } from "@/lib/auth";
-import { getDashboardSnapshot } from "@/lib/data";
 import { formatRelativeTime } from "@/lib/utils";
-
-export const dynamic = "force-dynamic";
+import type { DashboardSnapshot } from "@/lib/types";
 
 function statusClass(status: string) {
   if (status === "online") return styles.online;
@@ -14,13 +14,38 @@ function statusClass(status: string) {
   return styles.offline;
 }
 
-export default async function ControllersPage() {
-  const user = await getCurrentUser();
-  if (!user) {
-    return null;
+type Props = {
+  initialSnapshot: DashboardSnapshot;
+};
+
+export function ControllersPageClient({ initialSnapshot }: Props) {
+  const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const [message, setMessage] = useState("");
+
+  async function refreshControllers() {
+    const response = await fetch("/api/controllers", { cache: "no-store" });
+    if (response.ok) {
+      const data = (await response.json()) as DashboardSnapshot;
+      setSnapshot(data);
+    }
   }
 
-  const snapshot = await getDashboardSnapshot(user.id);
+  async function deleteController(controllerId: string, controllerName: string) {
+    if (!window.confirm(`Are you sure you want to delete "${controllerName}"? This will remove all channels and data associated with this controller. This action cannot be undone.`)) {
+      return;
+    }
+    
+    setMessage("Deleting controller...");
+    const response = await fetch(`/api/controllers/${controllerId}`, { method: "DELETE" });
+    
+    if (response.ok) {
+      setMessage("Controller deleted successfully.");
+      await refreshControllers();
+    } else {
+      const data = await response.json();
+      setMessage(data.error ?? "Failed to delete controller.");
+    }
+  }
 
   return (
     <>
@@ -33,6 +58,8 @@ export default async function ControllersPage() {
           </p>
         </div>
       </header>
+
+      {message && <div className={styles.card} style={{ marginBottom: "1rem" }}>{message}</div>}
 
       <section className={styles.section}>
         <div className={styles.sectionHead}>
@@ -76,9 +103,19 @@ export default async function ControllersPage() {
                     <strong>{controller.firmwareVersion}</strong>
                     <div className={styles.small}>Firmware</div>
                   </div>
-                  <Link className={styles.button} href={`/dashboard/controllers/${controller.id}`}>
-                    Open Controller
-                  </Link>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <Link className={styles.button} href={`/dashboard/controllers/${controller.id}`}>
+                      Open Controller
+                    </Link>
+                    <button
+                      className={styles.dangerButton}
+                      type="button"
+                      onClick={() => void deleteController(controller.id, controller.name)}
+                      style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </div>
                 </div>
               </article>
             ))
@@ -89,4 +126,20 @@ export default async function ControllersPage() {
       </section>
     </>
   );
+}
+
+import { getCurrentUser } from "@/lib/auth";
+import { getDashboardSnapshot } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
+
+export default async function ControllersPage() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return null;
+  }
+
+  const snapshot = await getDashboardSnapshot(user.id);
+
+  return <ControllersPageClient initialSnapshot={snapshot} />;
 }
