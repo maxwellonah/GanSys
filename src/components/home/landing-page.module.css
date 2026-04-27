@@ -28,9 +28,8 @@
 .navOrb {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
   flex-shrink: 0;
+  display: block;
 }
 
 .navName {

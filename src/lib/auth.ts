@@ -82,7 +82,14 @@ export async function setSessionCookie(token: string, expiresAt: string) {
 
 export async function clearSessionCookie() {
   const store = await cookies();
-  store.delete(SESSION_COOKIE);
+  store.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    expires: new Date(0),
+    maxAge: 0,
+  });
 }
 
 export async function getSessionToken() {
@@ -104,7 +111,8 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
   const session = rows[0];
   if (!session) {
-    await clearSessionCookie();
+    // Can't clear cookie here — may be called from a Server Component.
+    // The cookie will expire naturally or be cleared on next logout.
     return null;
   }
 
@@ -113,7 +121,6 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   const userRows = await db.select().from(users).where(eq(users.id, session.userId));
   const user = userRows[0];
   if (!user) {
-    await clearSessionCookie();
     return null;
   }
 

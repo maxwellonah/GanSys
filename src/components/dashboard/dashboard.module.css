@@ -29,9 +29,8 @@
 .brandOrb {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
   flex-shrink: 0;
+  display: block;
 }
 
 .eyebrow {

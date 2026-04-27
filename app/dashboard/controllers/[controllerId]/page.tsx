@@ -1,6 +1,7 @@
 import { ControllerDetail } from "@/components/dashboard/controller-detail";
 import { getCurrentUser } from "@/lib/auth";
 import { getControllerSnapshot } from "@/lib/data";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,14 @@ export default async function ControllerPage({ params }: Props) {
     return null;
   }
   const { controllerId } = await params;
-  const snapshot = await getControllerSnapshot(user.id, controllerId);
+  let snapshot;
+  try {
+    snapshot = await getControllerSnapshot(user.id, controllerId);
+  } catch (error) {
+    if (error instanceof Error && error.message === "Controller not found.") {
+      notFound();
+    }
+    throw error;
+  }
   return <ControllerDetail initialSnapshot={snapshot} />;
 }

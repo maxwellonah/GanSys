@@ -19,7 +19,7 @@ export function LandingPage() {
       {/* Nav */}
       <nav className={styles.nav}>
         <div className={styles.navBrand}>
-          <span className={styles.navOrb} />
+          <img src="/icon.svg" alt="GanSystems logo" className={styles.navOrb} />
           <span className={styles.navName}>GanSystems</span>
         </div>
         <div className={styles.navLinks}>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import styles from "@/components/dashboard/dashboard.module.css";
+import { ScopedErrorBoundary } from "@/components/system/scoped-error-boundary";
 import { CHANNEL_TEMPLATES, CONTROLLER_SETUP_PRESETS, getSetupPreset, getTemplate, type SetupPreset } from "@/lib/templates";
 import type { ControllerCard, DashboardSnapshot } from "@/lib/types";
 
@@ -146,6 +147,14 @@ export function SettingsView({ initialSnapshot }: Props) {
 
   function buildSuggestedHardwareId(name: string) {
     return `ESP32-${normalizeToken(name || "CONTROLLER")}`;
+  }
+
+  function applySuggestedHardwareId() {
+    setNewController((current) => {
+      const suggestedHardwareId = buildSuggestedHardwareId(current.name);
+      return { ...current, hardwareId: suggestedHardwareId };
+    });
+    setMessage("Suggested hardware ID applied.");
   }
 
   function buildUniqueChannelKey(controllerId: string, baseKey: string, reservedKeys: Set<string> = new Set()) {
@@ -446,6 +455,11 @@ export function SettingsView({ initialSnapshot }: Props) {
       ) : null}
 
       <section className={styles.settingsGrid}>
+        <ScopedErrorBoundary
+          badge="Quick start"
+          title="Quick start panel is unavailable"
+          message="The onboarding resource failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel} ${styles.settingsWide}`}>
           <div>
             <p className={styles.eyebrow}>Quick start</p>
@@ -511,7 +525,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             </div>
           </div>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Account profile"
+          title="Profile settings are unavailable"
+          message="The account profile section failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel} ${styles.settingsWide}`}>
           <div>
             <p className={styles.eyebrow}>Account profile</p>
@@ -546,7 +566,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             </button>
           </form>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Controller registration"
+          title="Controller registration is unavailable"
+          message="The controller form failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>Add ESP32</p>
@@ -556,28 +582,28 @@ export function SettingsView({ initialSnapshot }: Props) {
           <div className={styles.formGrid}>
             <label className={styles.formRow}>
               <span>Name</span>
-              <input value={newController.name} onChange={(event) => setNewController({ ...newController, name: event.target.value })} />
+              <input value={newController.name} onChange={(event) => setNewController((current) => ({ ...current, name: event.target.value }))} />
             </label>
             <div className={styles.twoCol}>
               <label className={styles.formRow}>
                 <span>Hardware ID</span>
-                <input value={newController.hardwareId} onChange={(event) => setNewController({ ...newController, hardwareId: event.target.value })} />
+                <input value={newController.hardwareId} onChange={(event) => setNewController((current) => ({ ...current, hardwareId: event.target.value }))} />
               </label>
               <label className={styles.formRow}>
                 <span>Location</span>
-                <input value={newController.location} onChange={(event) => setNewController({ ...newController, location: event.target.value })} />
+                <input value={newController.location} onChange={(event) => setNewController((current) => ({ ...current, location: event.target.value }))} />
               </label>
             </div>
             <button
               className={styles.ghostButton}
               type="button"
-              onClick={() => setNewController((current) => ({ ...current, hardwareId: buildSuggestedHardwareId(current.name) }))}
+              onClick={applySuggestedHardwareId}
             >
               Suggest Hardware ID
             </button>
             <label className={styles.formRow}>
               <span>Description</span>
-              <textarea value={newController.description} rows={3} onChange={(event) => setNewController({ ...newController, description: event.target.value })} />
+              <textarea value={newController.description} rows={3} onChange={(event) => setNewController((current) => ({ ...current, description: event.target.value }))} />
             </label>
             <label className={styles.formRow}>
               <span>Heartbeat interval (seconds)</span>
@@ -586,7 +612,7 @@ export function SettingsView({ initialSnapshot }: Props) {
                 min={15}
                 max={300}
                 value={newController.heartbeatIntervalSec}
-                onChange={(event) => setNewController({ ...newController, heartbeatIntervalSec: Number(event.target.value) || 60 })}
+                onChange={(event) => setNewController((current) => ({ ...current, heartbeatIntervalSec: Number(event.target.value) || 60 }))}
               />
             </label>
             <label className={styles.formRow}>
@@ -615,9 +641,15 @@ export function SettingsView({ initialSnapshot }: Props) {
             </button>
           </div>
         </article>
+        </ScopedErrorBoundary>
       </section>
 
       <section className={styles.settingsGrid}>
+        <ScopedErrorBoundary
+          badge="ESP32 guide"
+          title="ESP32 guide is unavailable"
+          message="The sync contract panel failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>ESP32 guide</p>
@@ -696,7 +728,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             )}
           </div>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Channel setup"
+          title="Channel setup is unavailable"
+          message="The channel configuration form failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>Add channel</p>
@@ -766,7 +804,13 @@ export function SettingsView({ initialSnapshot }: Props) {
             </button>
           </div>
         </article>
+        </ScopedErrorBoundary>
 
+        <ScopedErrorBoundary
+          badge="Inventory"
+          title="Controller inventory is unavailable"
+          message="The inventory panel failed here, but the rest of settings is still available."
+        >
         <article className={`${styles.settingsCard} ${styles.panel}`}>
           <div>
             <p className={styles.eyebrow}>Current inventory</p>
@@ -882,6 +926,7 @@ export function SettingsView({ initialSnapshot }: Props) {
             )}
           </div>
         </article>
+        </ScopedErrorBoundary>
       </section>
     </>
   );

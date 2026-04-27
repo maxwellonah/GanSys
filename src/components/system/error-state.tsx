@@ -37,7 +37,7 @@ export function ErrorState({
   fillViewport = true,
 }: Props) {
   return (
-    <div className={fillViewport ? styles.shell : undefined}>
+    <div className={fillViewport ? styles.shell : styles.inline}>
       <section className={styles.card}>
         <span className={`${styles.badge} ${styles[tone]}`}>
           <AlertTriangle size={14} />
