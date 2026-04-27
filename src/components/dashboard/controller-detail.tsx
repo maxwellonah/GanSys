@@ -499,6 +499,8 @@ export function ControllerDetail({ initialSnapshot }: Props) {
 function PestSchedulePanel({ controllerId }: { controllerId: string }) {
   const [enabled, setEnabled] = useState(true);
   const [sprayEntries, setSprayEntries] = useState<Array<{ startTime: string; durationMinutes: number }>>([]);
+  const [sprayPumpStartTime, setSprayPumpStartTime] = useState("");
+  const [sprayPumpEndTime, setSprayPumpEndTime] = useState("");
   const [uvStartTime, setUvStartTime] = useState("");
   const [uvEndTime, setUvEndTime] = useState("");
   const [saving, setSaving] = useState(false);
@@ -511,6 +513,8 @@ function PestSchedulePanel({ controllerId }: { controllerId: string }) {
         if (d.schedule) {
           setEnabled(d.schedule.enabled);
           setSprayEntries(d.schedule.sprayEntries);
+          setSprayPumpStartTime(d.schedule.sprayPumpStartTime ?? "");
+          setSprayPumpEndTime(d.schedule.sprayPumpEndTime ?? "");
           setUvStartTime(d.schedule.uvStartTime ?? "");
           setUvEndTime(d.schedule.uvEndTime ?? "");
         }
@@ -523,7 +527,14 @@ function PestSchedulePanel({ controllerId }: { controllerId: string }) {
     const r = await fetch(`/api/controllers/${controllerId}/pest-schedule`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ enabled, sprayEntries, uvStartTime: uvStartTime || null, uvEndTime: uvEndTime || null }),
+      body: JSON.stringify({ 
+        enabled, 
+        sprayEntries, 
+        sprayPumpStartTime: sprayPumpStartTime || null, 
+        sprayPumpEndTime: sprayPumpEndTime || null,
+        uvStartTime: uvStartTime || null, 
+        uvEndTime: uvEndTime || null 
+      }),
     });
     const d = await r.json();
     setSaving(false);
@@ -566,6 +577,23 @@ function PestSchedulePanel({ controllerId }: { controllerId: string }) {
               </button>
             )}
           </div>
+        </div>
+
+        <div>
+          <p className={styles.eyebrow} style={{ marginBottom: "0.5rem" }}>Spray Pump Auto On/Off</p>
+          <div className={styles.twoCol}>
+            <label className={styles.formRow}>
+              <span>Turn on at</span>
+              <input type="time" value={sprayPumpStartTime} onChange={(e) => setSprayPumpStartTime(e.target.value)} />
+            </label>
+            <label className={styles.formRow}>
+              <span>Turn off at</span>
+              <input type="time" value={sprayPumpEndTime} onChange={(e) => setSprayPumpEndTime(e.target.value)} />
+            </label>
+          </div>
+          <p className={styles.small} style={{ margin: "0.3rem 0 0", color: "var(--muted)" }}>
+            Automatically turn spray pump on/off at specified times daily
+          </p>
         </div>
 
         <div>

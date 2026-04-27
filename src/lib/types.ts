@@ -145,6 +145,8 @@ export type PestControlSchedule = {
   controllerId: string;
   enabled: boolean;
   sprayEntries: SprayEntry[];
+  sprayPumpStartTime: string | null;  // "HH:MM" - Auto turn on time
+  sprayPumpEndTime: string | null;    // "HH:MM" - Auto turn off time
   uvStartTime: string | null;
   uvEndTime: string | null;
   updatedAt: string;

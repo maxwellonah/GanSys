@@ -113,6 +113,8 @@ export const sprayEntrySchema = z.object({
 export const pestScheduleSchema = z.object({
   enabled: z.boolean(),
   sprayEntries: z.array(sprayEntrySchema).max(10),
+  sprayPumpStartTime: timeStringSchema.nullable().optional(),
+  sprayPumpEndTime: timeStringSchema.nullable().optional(),
   uvStartTime: timeStringSchema.nullable().optional(),
   uvEndTime: timeStringSchema.nullable().optional(),
 });

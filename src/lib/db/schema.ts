@@ -158,6 +158,8 @@ export const pestControlSchedules = pgTable(
       .$type<Array<{ startTime: string; durationMinutes: number }>>()
       .notNull()
       .default([]),
+    sprayPumpStartTime: text("spray_pump_start_time"),
+    sprayPumpEndTime: text("spray_pump_end_time"),
     uvStartTime: text("uv_start_time"),
     uvEndTime: text("uv_end_time"),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
